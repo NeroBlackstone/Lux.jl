@@ -15,7 +15,7 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 [compat]
 ADTypes = "0.2, 1"
 Literate = "2"
-Lux = "0.5.20"
+Lux = "0.5.20, 1"
 MLDatasets = "0.7.14"
 MLUtils = "0.4"
 OneHotArrays = "0.2.5"
