@@ -31,11 +31,11 @@ function ImageDataset(folder::String, augmentation_pipeline, normalization_param
             "n04336792_7448.JPEG", "n04371774_5854.JPEG", "n04596742_4225.JPEG",
             "n07583066_647.JPEG", "n13037406_4650.JPEG", "n02105855_2933.JPEG"]
         remove_files = joinpath.(
-            (folder,), joinpath.(first.(rsplit.(remove_files, "_", limit=2)), remove_files))
+            (folder,), joinpath.(first.(rsplit.(remove_files, "_"; limit=2)), remove_files))
 
         image_files = [setdiff(Set(image_files), Set(remove_files))...]
 
-        labels = [mapping[x] for x in map(x -> x[2], rsplit.(image_files, "/", limit=3))]
+        labels = [mapping[x] for x in map(x -> x[2], rsplit.(image_files, "/"; limit=3))]
     else
         vallist = hcat(split.(readlines(joinpath(@__DIR__, "val_list.txt")))...)
         labels = parse.(Int, vallist[2, :]) .+ 1
@@ -81,10 +81,10 @@ function construct(cfg::DatasetConfig)
     end
 
     train_data = BatchView(
-        shuffleobs(train_dataset); batchsize=cfg.train_batchsize ÷ total_workers,
+        shuffleobs(train_dataset); batchsize=(cfg.train_batchsize ÷ total_workers),
         partial=false, collate=true)
 
-    val_data = BatchView(val_dataset; batchsize=cfg.eval_batchsize ÷ total_workers,
+    val_data = BatchView(val_dataset; batchsize=(cfg.eval_batchsize ÷ total_workers),
         partial=true, collate=true)
 
     train_iter = Iterators.cycle(MLUtils.eachobsparallel(

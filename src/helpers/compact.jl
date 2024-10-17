@@ -164,8 +164,8 @@ julia> optim = Optimisers.setup(Adam(), ps);
 julia> loss_initial = sum(abs2, first(model(x_data, ps, st)) .- y_data);
 
 julia> for epoch in 1:1000
-           loss, gs = Zygote.withgradient(
-               ps -> sum(abs2, first(model(x_data, ps, st)) .- y_data), ps)
+           loss,
+           gs = Zygote.withgradient(ps -> sum(abs2, first(model(x_data, ps, st)) .- y_data), ps)
            Optimisers.update!(optim, ps, gs[1])
        end;
 
@@ -298,8 +298,9 @@ function supportself(fex::Expr, vars, splatted_kwargs)
     calls = []
     for var in vars
         push!(calls,
-            :($var = $(__maybe_make_stateful)($(_getproperty)($self, $(Val(var))),
-                $(_getproperty)($ps, $(Val(var))), $(_getproperty)($st, $(Val(var))))))
+            :($var = $(__maybe_make_stateful)(
+                $(_getproperty)($self, $(Val(var))), $(_getproperty)($ps, $(Val(var))),
+                $(_getproperty)($st, $(Val(var))))))
     end
     for var in splatted_kwargs
         push!(

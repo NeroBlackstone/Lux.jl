@@ -1,5 +1,5 @@
 @testitem "Pooling" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         x = randn(rng, Float32, 10, 10, 3, 2) |> aType
@@ -95,7 +95,7 @@
 end
 
 @testitem "CNN" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         @testset "Grouped Conv" begin
@@ -310,7 +310,7 @@ end
 end
 
 @testitem "Upsample" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         @testset "Construction" begin
@@ -384,7 +384,7 @@ end
 end
 
 @testitem "PixelShuffle" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         layer = PixelShuffle(2)
@@ -416,7 +416,7 @@ end
 end
 
 @testitem "CrossCor" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         @testset "Asymmetric Padding" begin
@@ -450,8 +450,8 @@ end
             @test ps.bias isa aType{Float16, 4}
         end
 
-        @testset "CrossCor SamePad kernelsize $k" for k in (
-            (1,), (2,), (3,), (2, 3), (1, 2, 3))
+        @testset "CrossCor SamePad kernelsize $k" for k in
+                                                      ((1,), (2,), (3,), (2, 3), (1, 2, 3))
             x = ones(Float32, (k .+ 3)..., 1, 1) |> aType
 
             @testset "Kwargs: $kwarg" for kwarg in (
@@ -485,7 +485,7 @@ end
 end
 
 @testitem "ConvTranspose" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         x = randn(Float32, 5, 5, 1, 1) |> aType

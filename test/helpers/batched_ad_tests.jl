@@ -1,7 +1,7 @@
 @testitem "Batched Jacobian" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ComponentArrays, ForwardDiff, Zygote
 
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         models = (
@@ -19,7 +19,7 @@
             @testset "$(backend)" for backend in (AutoZygote(), AutoForwardDiff())
                 J2 = batched_jacobian(smodel, backend, X)
                 J2_mat = mapreduce(Base.Fix1(Lux.__maybe_batched_row, J2),
-                    hcat, 1:(size(J2, 1) * size(J2, 3)))'
+                    hcat, 1:(size(J2, 1)*size(J2, 3)))'
 
                 @test J1≈J2_mat atol=1.0e-5 rtol=1.0e-5
 
@@ -35,6 +35,7 @@
 
         @testset "Issue #636 Chunksize Specialization" begin
             for N in (2, 4, 8, 11, 12, 50, 51), backend in (AutoZygote(), AutoForwardDiff())
+
                 model = @compact(; potential=Dense(N => N, gelu), backend=backend) do x
                     @return batched_jacobian(potential, backend, x)
                 end
@@ -78,7 +79,7 @@ end
 @testitem "Nested AD: Batched Jacobian" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ComponentArrays, ForwardDiff, Zygote
 
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         models = (
@@ -88,6 +89,7 @@ end
         Xs = (aType(randn(rng, Float32, 3, 3, 2, 4)), aType(randn(rng, Float32, 2, 4)))
 
         for (model, X) in zip(models, Xs), backend in (AutoZygote(), AutoForwardDiff())
+
             model = maybe_rewrite_to_crosscor(mode, model)
             ps, st = Lux.setup(rng, model) |> dev
 
@@ -107,18 +109,18 @@ end
             @test loss_function_batched(model, X, ps, st) ≈
                   loss_function_simple(model, X, ps, st)
 
-            _, ∂x_batched, ∂ps_batched, _ = Zygote.gradient(
-                loss_function_batched, model, X, ps, st)
-            _, ∂x_simple, ∂ps_simple, _ = Zygote.gradient(
-                loss_function_simple, model, X, ps, st)
+            _, ∂x_batched,
+            ∂ps_batched, _ = Zygote.gradient(loss_function_batched, model, X, ps, st)
+            _, ∂x_simple,
+            ∂ps_simple, _ = Zygote.gradient(loss_function_simple, model, X, ps, st)
 
             @test ∂x_batched≈∂x_simple atol=1.0e-5 rtol=1.0e-5
             @test check_approx(∂ps_batched, ∂ps_simple; atol=1.0e-5, rtol=1.0e-5)
 
             ps = ps |> cpu_device() |> ComponentArray |> dev
 
-            _, ∂x_batched2, ∂ps_batched2, _ = Zygote.gradient(
-                loss_function_batched, model, X, ps, st)
+            _, ∂x_batched2,
+            ∂ps_batched2, _ = Zygote.gradient(loss_function_batched, model, X, ps, st)
 
             @test ∂x_batched2≈∂x_batched atol=1.0e-5 rtol=1.0e-5
             @test check_approx(∂ps_batched2, ∂ps_batched; atol=1.0e-5, rtol=1.0e-5)

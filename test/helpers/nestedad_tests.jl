@@ -1,9 +1,9 @@
 @testitem "Nested AD: Input Gradient/Jacobian" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ComponentArrays, FiniteDifferences, ForwardDiff, LinearAlgebra, Zygote
 
-    Base.isfinite(::Nothing) = true
+    Base.isfinite(::Nothing)=true
 
-    rng = StableRNG(1234)
+    rng=StableRNG(1234)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         Xs = (aType(randn(rng, Float32, 3, 3, 2, 4)), aType(randn(rng, Float32, 2, 4)),
@@ -23,25 +23,33 @@
             ps, st = Lux.setup(rng, model) |> dev
 
             # smodel | ForwardDiff.jacobian
-            loss_function1 = (model, x, ps, st) -> begin
+            loss_function1 = (
+                model, x, ps, st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2, ForwardDiff.jacobian(smodel, x))
             end
 
             # smodel | Zygote.jacobian
-            loss_function2 = (model, x, ps, st) -> begin
+            loss_function2 = (
+                model, x, ps, st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2, only(Zygote.jacobian(smodel, x)))
             end
 
             # sum(abs2) ∘ smodel | ForwardDiff.gradient
-            loss_function3 = (model, x, ps, st) -> begin
+            loss_function3 = (model,
+                x,
+                ps,
+                st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2, ForwardDiff.gradient(Base.Fix1(sum, abs2) ∘ smodel, x))
             end
 
             # sum(abs2) ∘ smodel | Zygote.gradient
-            loss_function4 = (model, x, ps, st) -> begin
+            loss_function4 = (model,
+                x,
+                ps,
+                st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2, only(Zygote.gradient(Base.Fix1(sum, abs2) ∘ smodel, x)))
             end
@@ -78,9 +86,9 @@ end
 @testitem "Nested AD: Parameter Gradient/Jacobian" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ComponentArrays, FiniteDifferences, ForwardDiff, LinearAlgebra, Zygote
 
-    Base.isfinite(::Nothing) = true
+    Base.isfinite(::Nothing)=true
 
-    rng = StableRNG(1234)
+    rng=StableRNG(1234)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         Xs = (aType(randn(rng, Float32, 3, 3, 2, 4)), aType(randn(rng, Float32, 2, 4)),
@@ -102,26 +110,36 @@ end
             st = st |> dev
 
             # smodel | ForwardDiff.jacobian
-            loss_function1 = (model, x, ps, st) -> begin
+            loss_function1 = (model, x, ps,
+                st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2, ForwardDiff.jacobian(Base.Fix1(smodel, x), ps))
             end
 
             # smodel | Zygote.jacobian
-            loss_function2 = (model, x, ps, st) -> begin
+            loss_function2 = (model,
+                x,
+                ps,
+                st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2, only(Zygote.jacobian(Base.Fix1(smodel, x), ps)))
             end
 
             # sum(abs2) ∘ smodel | ForwardDiff.gradient
-            loss_function3 = (model, x, ps, st) -> begin
+            loss_function3 = (model,
+                x,
+                ps,
+                st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2,
                     ForwardDiff.gradient(Base.Fix1(sum, abs2) ∘ Base.Fix1(smodel, x), ps))
             end
 
             # sum(abs2) ∘ smodel | Zygote.gradient
-            loss_function4 = (model, x, ps, st) -> begin
+            loss_function4 = (model,
+                x,
+                ps,
+                st) -> begin
                 smodel = StatefulLuxLayer{true}(model, ps, st)
                 return sum(abs2,
                     only(Zygote.gradient(Base.Fix1(sum, abs2) ∘ Base.Fix1(smodel, x), ps)))
@@ -159,9 +177,9 @@ end
 @testitem "Nested AD: Structured Matrix LuxDL/Lux.jl#602" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ComponentArrays, FiniteDifferences, ForwardDiff, LinearAlgebra, Zygote
 
-    Base.isfinite(::Nothing) = true
+    Base.isfinite(::Nothing)=true
 
-    rng = StableRNG(1234)
+    rng=StableRNG(1234)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         @testset "Structured Matrix: Issue LuxDL/Lux.jl#602" begin
@@ -196,9 +214,9 @@ end
 @testitem "Nested AD: VJP & JVP" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ComponentArrays, FiniteDifferences, ForwardDiff, LinearAlgebra, Zygote, ADTypes
 
-    Base.isfinite(::Nothing) = true
+    Base.isfinite(::Nothing)=true
 
-    rng = StableRNG(1234)
+    rng=StableRNG(1234)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         models = (
@@ -244,8 +262,8 @@ end
                   loss_function_vjp_jacobian(model, X, ps, st, vjp_input)
 
             _, ∂x, ∂ps, _ = Zygote.gradient(loss_function_vjp, model, X, ps, st, vjp_input)
-            _, ∂x_vjp, ∂ps_vjp, _, _ = Zygote.gradient(
-                loss_function_vjp_jacobian, model, X, ps, st, vjp_input)
+            _, ∂x_vjp, ∂ps_vjp,
+            _, _ = Zygote.gradient(loss_function_vjp_jacobian, model, X, ps, st, vjp_input)
 
             @test ∂x≈∂x_vjp rtol=1e-3 atol=1e-3
             @test check_approx(∂ps, ∂ps_vjp; rtol=1e-3, atol=1e-3)
@@ -256,8 +274,8 @@ end
                   loss_function_jvp_jacobian(model, X, ps, st, jvp_input)
 
             _, ∂x, ∂ps, _ = Zygote.gradient(loss_function_jvp, model, X, ps, st, jvp_input)
-            _, ∂x_jvp, ∂ps_jvp, _, _ = Zygote.gradient(
-                loss_function_jvp_jacobian, model, X, ps, st, jvp_input)
+            _, ∂x_jvp, ∂ps_jvp,
+            _, _ = Zygote.gradient(loss_function_jvp_jacobian, model, X, ps, st, jvp_input)
 
             @test ∂x≈∂x_jvp rtol=1e-3 atol=1e-3
             @test check_approx(∂ps, ∂ps_jvp; rtol=1e-3, atol=1e-3)
@@ -268,7 +286,7 @@ end
 @testitem "VJP/JVP Interface Test" setup=[SharedTestSetup] tags=[:autodiff] begin
     using ForwardDiff, Functors, Zygote, ADTypes
 
-    rng = StableRNG(1234)
+    rng=StableRNG(1234)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         x = rand(rng, 3, 3) |> aType
@@ -298,8 +316,8 @@ end
         return functorABC(st.functor.a .* st.functor.b, st.tup[1] .* st.tup[2])
     end
 
-    nt = (functor=functorABC(rand(rng, 3), rand(rng, 3)), tup=(rand(rng, 3), rand(rng, 3)))
-    u = (functor=functorABC(rand(rng, 3), rand(rng, 3)), tup=(rand(rng, 3), rand(rng, 3)))
+    nt=(functor=functorABC(rand(rng, 3), rand(rng, 3)), tup=(rand(rng, 3), rand(rng, 3)))
+    u=(functor=functorABC(rand(rng, 3), rand(rng, 3)), tup=(rand(rng, 3), rand(rng, 3)))
 
     @test_nowarn jacobian_vector_product(ftest, AutoForwardDiff(), nt, u)
 end
@@ -308,22 +326,22 @@ end
     using Zygote, Optimisers, Random, ForwardDiff, ComponentArrays
 
     function loss_function(model, ps, st, x)
-        smodel = StatefulLuxLayer{true}(model, ps, st)
-        y_pred = smodel(x)
-        dy_pred = only(Zygote.gradient(sum ∘ smodel, x))
-        loss = sum(dy_pred .+ y_pred .^ 2 / 2)
+        smodel=StatefulLuxLayer{true}(model, ps, st)
+        y_pred=smodel(x)
+        dy_pred=only(Zygote.gradient(sum∘smodel, x))
+        loss=sum(dy_pred .+ y_pred .^ 2/2)
         return loss
     end
 
-    rng = StableRNG(1234)
-    model = Chain(Dense(1 => 8, sigmoid), Dense(8 => 1))
-    ps, st = Lux.setup(rng, model)
-    x = randn(rng, Float32, 1, 12)
+    rng=StableRNG(1234)
+    model=Chain(Dense(1=>8, sigmoid), Dense(8=>1))
+    ps, st=Lux.setup(rng, model)
+    x=randn(rng, Float32, 1, 12)
 
-    _, ∂ps, _, ∂x = Zygote.gradient(loss_function, model, ps, st, x)
+    _, ∂ps, _, ∂x=Zygote.gradient(loss_function, model, ps, st, x)
 
-    ∂ps_fd = ForwardDiff.gradient(ps -> loss_function(model, ps, st, x), ComponentArray(ps))
-    ∂x_fd = ForwardDiff.gradient(x -> loss_function(model, ps, st, x), x)
+    ∂ps_fd=ForwardDiff.gradient(ps->loss_function(model, ps, st, x), ComponentArray(ps))
+    ∂x_fd=ForwardDiff.gradient(x->loss_function(model, ps, st, x), x)
 
     @test ComponentArray(∂ps)≈∂ps_fd rtol=1e-3 atol=1e-3
     @test ∂x≈∂x_fd rtol=1e-3 atol=1e-3

@@ -64,6 +64,7 @@ end
 
 function _share_parameters(ps, new_parameters, lens)
     for (new_ps, lens_group) in zip(new_parameters, lens), cur_lens in lens_group
+
         ps = _safe_update_parameter(ps, cur_lens, new_ps)
     end
     return ps
@@ -80,7 +81,8 @@ function _safe_update_parameter(ps, lens, new_ps)
 end
 
 function _assert_disjoint_sharing_list(sharing)
-    for i in eachindex(sharing), j in (i + 1):length(sharing)
+    for i in eachindex(sharing), j in (i+1):length(sharing)
+
         if !isdisjoint(sharing[i], sharing[j])
             throw(ArgumentError(lazy"sharing[$i] ($(sharing[i])) and sharing[$j] ($(sharing[j])) must be disjoint"))
         end

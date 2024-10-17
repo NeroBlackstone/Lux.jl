@@ -135,7 +135,8 @@ function (BN::BatchNorm)(x::AbstractArray, ps, st::NamedTuple)
     end
 
     x′ = match_eltype(BN, ps, st, x)
-    y, stats = batchnorm(x′, _getproperty(ps, Val(:scale)), _getproperty(ps, Val(:bias)),
+    y,
+    stats = batchnorm(x′, _getproperty(ps, Val(:scale)), _getproperty(ps, Val(:bias)),
         _getproperty(st, Val(:running_mean)), _getproperty(st, Val(:running_var)),
         st.training, BN.activation, BN.momentum, BN.epsilon)
     return y, __update_bn_state(BN, st, stats)
@@ -364,7 +365,8 @@ parameterlength(l::InstanceNorm) = ifelse(_affine(l), l.chs * 2, 0)
 
 function (IN::InstanceNorm)(x::AbstractArray, ps, st::NamedTuple)
     x′ = match_eltype(IN, ps, st, x)
-    y, stats = instancenorm(x′, _getproperty(ps, Val(:scale)), _getproperty(ps, Val(:bias)),
+    y,
+    stats = instancenorm(x′, _getproperty(ps, Val(:scale)), _getproperty(ps, Val(:bias)),
         st.training, IN.activation, IN.epsilon)
     return y, st
 end
@@ -428,7 +430,7 @@ function WeightNorm{which_params}(layer::AbstractExplicitLayer;
     return WeightNorm{which_params}(layer, dims)
 end
 
-function WeightNorm(layer::AbstractExplicitLayer, which_params::NTuple{N, Symbol},
+function WeightNorm(layer::AbstractExplicitLayer, which_params::NTuple{N, Symbol};
         dims::Union{Tuple, Nothing}=nothing) where {N}
     return WeightNorm{which_params}(layer; dims)
 end
@@ -572,7 +574,7 @@ where ``\gamma`` & ``\beta`` are trainable parameters if `affine=true`.
     dims
 end
 
-function LayerNorm(shape::NTuple{N, <:Int}, activation=identity; epsilon::T=1.0f-5,
+function LayerNorm(shape::NTuple{N, <:Int}; activation=identity, epsilon::T=1.0f-5,
         dims=Colon(), affine::Bool=true, init_bias=zeros32,
         init_scale=ones32, allow_fast_activation::Bool=true) where {N, T}
     activation = allow_fast_activation ? NNlib.fast_act(activation) : activation

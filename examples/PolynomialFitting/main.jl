@@ -71,8 +71,8 @@ vjp_rule = AutoZygote()
 function main(tstate::Lux.Experimental.TrainState, vjp, data, epochs)
     data = data .|> gpu_device()
     for epoch in 1:epochs
-        _, loss, _, tstate = Lux.Experimental.single_train_step!(
-            vjp, loss_function, data, tstate)
+        _, loss,
+        _, tstate = Lux.Experimental.single_train_step!(vjp, loss_function, data, tstate)
         if epoch % 50 == 1 || epoch == epochs
             @printf "Epoch: %3d \t Loss: %.5g\n" epoch loss
         end

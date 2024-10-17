@@ -137,7 +137,9 @@ function train(model_function; cpu::Bool=false, kwargs...)
         for (x, y) in train_dataloader
             x = dev(x)
             y = dev(y)
-            _, _, _, tstate = Lux.Experimental.single_train_step!(
+            _, _,
+            _,
+            tstate = Lux.Experimental.single_train_step!(
                 AutoZygote(), logitcrossentropy, (x, y), tstate)
         end
         ttime = time() - stime

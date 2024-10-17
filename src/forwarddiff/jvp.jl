@@ -31,7 +31,9 @@ function CRC.rrule(cfg::RuleConfig{>:HasReverseMode},
     res = __jacobian_vector_product_ad_impl(f, x, u, y)
 
     pullback_fn = let cfg = cfg
-        (f_internal, x, args...) -> begin
+        (f_internal,
+            x,
+            args...) -> begin
             internal_res, ∂f = CRC.rrule_via_ad(cfg, f_internal, x, args...)
             ∂f_internal = let ∂f = ∂f
                 Δ -> ∂f(Δ)[2:end]
@@ -42,7 +44,8 @@ function CRC.rrule(cfg::RuleConfig{>:HasReverseMode},
 
     ∇nested_jvp = let pullback_fn = pullback_fn, f = f, x = x, y = y, u = u, cfg = cfg
         Δ -> begin
-            _, pb_f = CRC.rrule_via_ad(
+            _,
+            pb_f = CRC.rrule_via_ad(
                 cfg, __internal_ad_pullback_call, pullback_fn, f, x, y, Δ)
             _, _, _, ∂x, ∂y, _ = pb_f(u)
             return NoTangent(), NoTangent(), ∂x, NoTangent(), ∂y

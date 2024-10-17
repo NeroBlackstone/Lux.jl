@@ -1,13 +1,13 @@
 @testitem "FromFluxAdaptor" setup=[SharedTestSetup] tags=[:others] begin
     import Flux
 
-    from_flux = fdev(::Lux.LuxCPUDevice) = Flux.cpu
-    fdev(::Lux.LuxCUDADevice) = Base.Fix1(Flux.gpu, Flux.FluxCUDAAdaptor())
-    fdev(::Lux.LuxAMDGPUDevice) = Base.Fix1(Flux.gpu, Flux.FluxAMDAdaptor())
+    from_flux=fdev(::Lux.LuxCPUDevice)=Flux.cpu
+    fdev(::Lux.LuxCUDADevice)=Base.Fix1(Flux.gpu, Flux.FluxCUDAAdaptor())
+    fdev(::Lux.LuxAMDGPUDevice)=Base.Fix1(Flux.gpu, Flux.FluxAMDAdaptor())
 
-    toluxpsst = FromFluxAdaptor(; preserve_ps_st=true)
-    tolux = FromFluxAdaptor()
-    toluxforce = FromFluxAdaptor(; force_preserve=true, preserve_ps_st=true)
+    toluxpsst=FromFluxAdaptor(; preserve_ps_st=true)
+    tolux=FromFluxAdaptor()
+    toluxforce=FromFluxAdaptor(; force_preserve=true, preserve_ps_st=true)
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         @testset "Containers" begin
@@ -117,8 +117,8 @@
             end
 
             @testset "Scale" begin
-                for model in [
-                    Flux.Scale(2) |> fdev(dev), Flux.Scale(2; bias=false) |> fdev(dev)]
+                for model in
+                    [Flux.Scale(2) |> fdev(dev), Flux.Scale(2; bias=false) |> fdev(dev)]
                     x = randn(Float32, 2, 4) |> aType
 
                     model_lux = toluxpsst(model)

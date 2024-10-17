@@ -126,8 +126,8 @@ true
 """
 function layer_map(f::F, l, ps, st, name::String="model") where {F <: Function}
     # TODO: In v0.6 deprecate passing the string
-    f_wrapper = @closure (kp, layer, ps_, st_) -> f(
-        layer, ps_, st_, __keypath_to_string(name, kp))
+    f_wrapper = @closure (
+        kp, layer, ps_, st_) -> f(layer, ps_, st_, __keypath_to_string(name, kp))
     return fmap_with_path(f_wrapper, l, ps, st; walk=LayerWalkWithPath())
 end
 

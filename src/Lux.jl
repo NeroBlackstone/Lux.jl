@@ -130,6 +130,6 @@ export MPIBackend, NCCLBackend, DistributedUtils
 @compat public xlogx, xlogy
 @compat(public,
     (recursive_add!!, recursive_copyto!, recursive_eltype,
-        recursive_make_zero, recursive_map, recursive_make_zero!!))
+    recursive_make_zero, recursive_map, recursive_make_zero!!))
 
 end

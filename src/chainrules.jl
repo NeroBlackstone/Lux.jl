@@ -101,7 +101,7 @@ function CRC.rrule(
         ::typeof(Broadcast.broadcasted), ::typeof(xlogx), x::AbstractArray{<:Number})
     logx = log.(x)
     y = x .* logx
-    ∇xlogx = @closure Δ -> (NoTangent(), NoTangent(), @thunk(Δ.*(logx .+ true)))
+    ∇xlogx = @closure Δ -> (NoTangent(), NoTangent(), @thunk(Δ .* (logx .+ true)))
     return y, ∇xlogx
 end
 
@@ -116,6 +116,7 @@ function CRC.rrule(::typeof(Broadcast.broadcasted), ::typeof(xlogy),
         x::AbstractArray{<:Number}, y::AbstractArray{<:Number})
     logy = log.(y)
     z = x .* logy
-    ∇xlogy = @closure Δ -> (NoTangent(), NoTangent(), @thunk(Δ.*logy), @thunk(Δ .* x./y))
+    ∇xlogy = @closure Δ -> (
+        NoTangent(), NoTangent(), @thunk(Δ .* logy), @thunk(Δ .* x ./ y))
     return z, ∇xlogy
 end

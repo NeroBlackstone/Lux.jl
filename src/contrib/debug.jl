@@ -73,7 +73,8 @@ function (d::DebugLayer{NaNCheck, ErrorCheck})(x, ps, st) where {NaNCheck, Error
             __check_nan_and_throw(st, "states", d.layer, d.location)
         end
     end
-    y, st_ = __debug_layer_internal(
+    y,
+    st_ = __debug_layer_internal(
         d.layer, x, ps, st, d.location, ErrorCheck, NaNCheck ∈ (:both, :backward))
     CRC.ignore_derivatives() do
         if NaNCheck ∈ (:both, :forward)
@@ -102,7 +103,8 @@ function __check_nan_and_throw(x, str::AbstractString, layer, location::KeyPath)
 end
 
 function __debug_layer_internal(layer, x, ps, st, location, EC, NC)
-    y, st_ = try
+    y,
+    st_ = try
         apply(layer, x, ps, st)
     catch
         EC && @error "Layer $(layer) failed!! This layer is present at location $(location)"

@@ -353,7 +353,7 @@ end
 @inline __get_epsilon(::Type{T}, ::Nothing) where {T} = eps(float(T))
 
 @inline __get_dims(::AbstractVector) = Colon()
-@inline __get_dims(::AbstractArray{T, N}) where {T, N} = 1:(N - 1)
+@inline __get_dims(::AbstractArray{T, N}) where {T, N} = 1:(N-1)
 
 @inline __zero(x) = zero(x)
 @inline __zero(::Nothing) = nothing

@@ -147,7 +147,10 @@ function main(model_type)
             x = x |> dev
             y = y |> dev
 
-            (_, loss, _, train_state) = Lux.Experimental.single_train_step!(
+            (_,
+                loss,
+                _,
+                train_state) = Lux.Experimental.single_train_step!(
                 AutoZygote(), lossfn, (x, y), train_state)
 
             @printf "Epoch [%3d]: Loss %4.5f\n" epoch loss

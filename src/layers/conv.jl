@@ -87,7 +87,7 @@ O_i = \left\lfloor\frac{I_i + p_i + p_{(i + N) \% |p|} - d_i \times (k_i - 1)}{s
     init_bias
 end
 
-function Conv(k::NTuple{N, Integer}, ch::Pair{<:Integer, <:Integer}, activation=identity;
+function Conv(k::NTuple{N, Integer}, ch::Pair{<:Integer, <:Integer}; activation=identity,
         init_weight=glorot_uniform, init_bias=zeros32, stride=1, pad=0, dilation=1,
         groups=1, use_bias::Bool=true, allow_fast_activation::Bool=true) where {N}
     stride = _expand(Val(N), stride)
@@ -585,7 +585,7 @@ O_i = \left\lfloor\frac{I_i + p_i + p_{(i + N) \% |p|} - d_i \times (k_i - 1)}{s
 end
 
 function CrossCor(
-        k::NTuple{N, Integer}, ch::Pair{<:Integer, <:Integer}, activation=identity;
+        k::NTuple{N, Integer}, ch::Pair{<:Integer, <:Integer}; activation=identity,
         init_weight=glorot_uniform, init_bias=zeros32, stride=1, pad=0, dilation=1,
         use_bias::Bool=true, allow_fast_activation::Bool=true) where {N}
     stride = _expand(Val(N), stride)
@@ -707,7 +707,7 @@ Standard convolutional transpose layer.
 end
 
 function ConvTranspose(
-        k::NTuple{N, Integer}, ch::Pair{<:Integer, <:Integer}, activation=identity;
+        k::NTuple{N, Integer}, ch::Pair{<:Integer, <:Integer}; activation=identity,
         init_weight=glorot_uniform, init_bias=zeros32, stride=1, pad=0, dilation=1,
         use_bias::Bool=true, groups=1, allow_fast_activation::Bool=true) where {N}
     stride = _expand(Val(N), stride)

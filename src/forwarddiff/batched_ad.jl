@@ -6,7 +6,8 @@ end
 function CRC.rrule(cfg::RuleConfig{>:HasReverseMode}, ::typeof(__batched_jacobian),
         f::F, backend::AutoForwardDiff, x, y) where {F}
     grad_fn = let cfg = cfg
-        (f_internal, x, args...) -> begin
+        (f_internal, x,
+            args...) -> begin
             res, ∂f = CRC.rrule_via_ad(cfg, f_internal, x, args...)
             return ∂f(one(res))[2:end]
         end
@@ -91,9 +92,9 @@ end
         ::Type{Partials}, idx::Int) where {F, T, Tag, CK, Dual, Partials}
     N, B = size(x)
 
-    idxs = idx:min(idx + CK - 1, N)
-    idxs_prev = 1:(idx - 1)
-    idxs_next = (idx + CK):N
+    idxs = idx:min(idx+CK-1, N)
+    idxs_prev = 1:(idx-1)
+    idxs_next = (idx+CK):N
 
     dev = get_device(x)
 

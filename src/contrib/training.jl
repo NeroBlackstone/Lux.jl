@@ -221,7 +221,8 @@ end
         objective_function::F, m, ps, st, data, first_try::Val) where {F}
     st_updated, stats = __generate_wrappers(objective_function, m, ps, st, data, first_try)
 
-    wrapped_objective_function = @closure (model, ps, st, data) -> begin
+    wrapped_objective_function = @closure (model, ps, st,
+        data) -> begin
         loss, st_, stats_ = objective_function(model, ps, st, data)
         Lux.__set_refval!(st_updated, st_)
         Lux.__set_refval!(stats, stats_)

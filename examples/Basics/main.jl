@@ -228,8 +228,8 @@ function pushforward_forwarddiff(f, x)
     T = eltype(x)
     function pushforward(v)
         v_ = reshape(v, axes(x))
-        y = ForwardDiff.Dual{
-            ForwardDiff.Tag{TestTag, T}, T, 1}.(x, ForwardDiff.Partials.(tuple.(v_)))
+        y = ForwardDiff.Dual{ForwardDiff.Tag{TestTag, T}, T, 1}.(
+            x, ForwardDiff.Partials.(tuple.(v_)))
         res = vec(f(y))
         return ForwardDiff.value.(res), vec(ForwardDiff.partials.(res, 1))
     end
@@ -305,7 +305,9 @@ println("Loss Value with ground true parameters: ", lossfn(W * x_samples .+ b, y
 function train_model!(model, ps, st, opt, nepochs::Int)
     tstate = Lux.Experimental.TrainState(model, ps, st, opt)
     for i in 1:nepochs
-        grads, loss, _, tstate = Lux.Experimental.single_train_step!(
+        grads, loss,
+        _,
+        tstate = Lux.Experimental.single_train_step!(
             AutoZygote(), lossfn, (x_samples, y_samples), tstate)
         if i % 1000 == 1 || i == nepochs
             @printf "Loss Value after %6d iterations: %.8f\n" i loss

@@ -2,7 +2,7 @@
     using Setfield
 
     function zero_dense_params_1(l, ps, st, name)
-        if l isa Dense && occursin("model.layers.chain", name)
+        if l isa Dense&&occursin("model.layers.chain", name)
             @set! ps.weight = zero.(ps.weight)
             @set! ps.bias = zero.(ps.bias)
         end
@@ -10,7 +10,7 @@
     end
 
     function zero_dense_params_2(l, ps, st, name)
-        if l isa Dense && occursin("c.layers.chain", name)
+        if l isa Dense&&occursin("c.layers.chain", name)
             @set! ps.weight = zero.(ps.weight)
             @set! ps.bias = zero.(ps.bias)
         end

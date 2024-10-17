@@ -13,17 +13,18 @@ const AD_CONVERTIBLE_FUNCTIONS = [
 
 ## Written like this to avoid dynamic dispatch from Zygote
 # Input Gradient / Jacobian
-@inline __rewrite_ad_call(f::ComposedFunction{F, <:StatefulLuxLayer}) where {F} = (
-    f, f.inner.ps)
-@inline __rewrite_ad_call(f::ComposedFunction{<:StatefulLuxLayer, F}) where {F} = (
-    @closure((x, ps)->f.outer(f.inner(x), ps)), f.outer.ps)
+@inline __rewrite_ad_call(f::ComposedFunction{
+    F, <:StatefulLuxLayer}) where {F} = (f, f.inner.ps)
+@inline __rewrite_ad_call(f::ComposedFunction{<:StatefulLuxLayer,
+    F}) where {F} = (@closure((x, ps)->f.outer(f.inner(x), ps)), f.outer.ps)
 @inline __rewrite_ad_call(f::StatefulLuxLayer) = f, f.ps
 
 # Parameter Gradient / Jacobian
-@inline __rewrite_ad_call(f::ComposedFunction{F, <:Base.Fix1{<:StatefulLuxLayer}}) where {F} = (
+@inline __rewrite_ad_call(f::ComposedFunction{F,
+    <:Base.Fix1{<:StatefulLuxLayer}}) where {F} = (
     @closure((ps, x)->f.outer(f.inner.f(x, ps))), f.inner.x)
-@inline __rewrite_ad_call(f::ComposedFunction{<:Base.Fix1{<:StatefulLuxLayer}, F}) where {F} = (
-    @closure((ps, x)->f.outer.f(x, f.inner(ps))), f.outer.x)
+@inline __rewrite_ad_call(f::ComposedFunction{<:Base.Fix1{<:StatefulLuxLayer},
+    F}) where {F} = (@closure((ps, x)->f.outer.f(x, f.inner(ps))), f.outer.x)
 @inline __rewrite_ad_call(f::Base.Fix1{<:StatefulLuxLayer}) = (
     @closure((ps, x)->f.f(x, ps)), f.x)
 
@@ -173,9 +174,9 @@ end
     i = mod1(i, M)
     y = similar(x, N * K)
     data = view(x, i, :, k)
-    fill!(view(y, 1:(N * (K - 1))), zero(T))
-    copyto!(view(y, (N * (k - 1) + 1):(N * k)), data)
-    fill!(view(y, (N * k + 1):(N * K)), zero(T))
+    fill!(view(y, 1:(N*(K-1))), zero(T))
+    copyto!(view(y, (N*(k-1)+1):(N*k)), data)
+    fill!(view(y, (N*k+1):(N*K)), zero(T))
     return y
 end
 

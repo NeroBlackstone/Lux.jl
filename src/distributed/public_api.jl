@@ -278,7 +278,7 @@ end
 
 @compat(public,
     (initialized, initialize, get_distributed_backend, local_rank,
-        total_workers, bcast!, allreduce!, reduce!, synchronize!!,
-        DistributedDataContainer, DistributedOptimizer, avg))
+    total_workers, bcast!, allreduce!, reduce!, synchronize!!,
+    DistributedDataContainer, DistributedOptimizer, avg))
 
 end

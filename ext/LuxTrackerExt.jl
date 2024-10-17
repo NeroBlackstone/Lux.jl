@@ -72,6 +72,7 @@ end
 
 # SimpleChains.jl: DON'T REPLACE THESE WITH @grad_from_chainrules
 for T1 in (:TrackedArray, :AbstractArray), T2 in (:TrackedArray, :AbstractArray)
+
     T1 === :AbstractArray && T2 === :AbstractArray && continue
 
     @eval function Lux.__apply_simple_chain(layer, x::$(T1), ps::$(T2), dev::LuxCPUDevice)
@@ -96,6 +97,7 @@ end
 
 # DynamicExpressions.jl
 for T1 in (:TrackedArray, :AbstractArray), T2 in (:TrackedArray, :AbstractArray)
+
     T1 === :AbstractArray && T2 === :AbstractArray && continue
 
     @eval @grad_from_chainrules Lux.__apply_dynamic_expression(

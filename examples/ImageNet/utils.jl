@@ -38,7 +38,7 @@ get_prng(seed::Int) = Xoshiro(seed)
 function accuracy(ŷ, y, topk=(1,))
     maxk = maximum(topk)
 
-    pred_labels = partialsortperm.(eachcol(ŷ), (1:maxk,), rev=true)
+    pred_labels = partialsortperm.(eachcol(ŷ), (1:maxk,); rev=true)
     true_labels = onecold(y)
 
     accuracies = Vector{Float32}(undef, length(topk))
@@ -124,7 +124,7 @@ struct ProgressMeter{N}
     meters::NTuple{N, AverageMeter}
 end
 
-function ProgressMeter(num_batches::Int, meters::NTuple{N}, prefix::String="") where {N}
+function ProgressMeter(num_batches::Int, meters::NTuple{N}; prefix::String="") where {N}
     fmt = "%" * string(length(string(num_batches))) * "d"
     fmt2 = "{1:" * string(length(string(num_batches))) * "d}"
     prefix = prefix != "" ? endswith(prefix, " ") ? prefix : prefix * " " : ""

@@ -119,8 +119,8 @@ end
 
 # Eltype Matching Tests
 if ("all" in LUX_TEST_GROUP || "eltype_match" in LUX_TEST_GROUP)
-    @testset "eltype_mismath_handling: $option" for option in (
-        "none", "warn", "convert", "error")
+    @testset "eltype_mismath_handling: $option" for option in
+                                                    ("none", "warn", "convert", "error")
         set_preferences!(Lux, "eltype_mismatch_handling" => option; force=true)
         run(`$(Base.julia_cmd()) --color=yes --project=$(dirname(Pkg.project().path))
             --startup-file=no --code-coverage=user $(@__DIR__)/eltype_matching.jl`)

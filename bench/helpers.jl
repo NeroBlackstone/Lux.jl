@@ -3,22 +3,27 @@ function benchmark_forward_pass(
         tag::String, end_tag::String, model, x_dims; simple_chains=nothing,
         flux_model=nothing)
     SUITE[tag]["cpu"]["forward"]["NamedTuple"][end_tag] = @benchmarkable Lux.apply(
-        $model, x, ps_nt, st_test) setup=((x, ps_nt, st) = general_setup($model, $x_dims); st_test = Lux.testmode(st))
+        $model, x, ps_nt, st_test) setup=(
+        (x, ps_nt, st)=general_setup($model, $x_dims); st_test=Lux.testmode(st))
 
     SUITE[tag]["cpu"]["forward"]["ComponentArray"][end_tag] = @benchmarkable Lux.apply(
-        $model, x, ps_ca, st_test) setup=((x, ps_nt, st) = general_setup($model, $x_dims); ps_ca = ComponentArray(ps_nt); st_test = Lux.testmode(st))
+        $model, x, ps_ca, st_test) setup=((x, ps_nt, st)=general_setup($model, $x_dims);
+        ps_ca=ComponentArray(ps_nt); st_test=Lux.testmode(st))
 
     if simple_chains !== nothing
         simple_chains_model = simple_chains(model)
         SUITE[tag]["cpu"]["forward"]["SimpleChains"][end_tag] = @benchmarkable Lux.apply(
-            $simple_chains_model, x, ps_simple_chains, st_simple_chains) setup=((x, ps_simple_chains, st_simple_chains) = general_setup(
+            $simple_chains_model, x, ps_simple_chains, st_simple_chains) setup=((
+            x, ps_simple_chains,
+            st_simple_chains) = general_setup(
             $simple_chains_model, $x_dims))
     end
 
     if flux_model !== nothing
-        SUITE[tag]["cpu"]["forward"]["Flux"][end_tag] = @benchmarkable fmodel(x) setup=(x = randn(
-            StableRNG(0), Float32, $x_dims);
-        fmodel = $(flux_model()))
+        SUITE[tag]["cpu"]["forward"]["Flux"][end_tag] = @benchmarkable fmodel(x) setup=(
+            x=randn(
+                StableRNG(0), Float32, $x_dims);
+            fmodel=($(flux_model())))
     end
 
     return

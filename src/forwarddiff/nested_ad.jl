@@ -8,6 +8,7 @@ for cfg in (:JacobianConfig, :GradientConfig)
 end
 
 for fType in AD_CONVERTIBLE_FUNCTIONS, type in (:Gradient, :Jacobian)
+
     cfgname = Symbol(type, :Config)
     fname = Symbol(lowercase(string(type)))
     internal_fname = Symbol(:__internal_forwarddiff_, fname)
@@ -31,9 +32,11 @@ for type in (:Gradient, :Jacobian)
     end
 
     rrule_call = if type == :Gradient
-        :((res, pb_f) = CRC.rrule_via_ad(cfg, __internal_ad_gradient_call, grad_fn, f, x, y))
+        :((res,
+            pb_f) = CRC.rrule_via_ad(cfg, __internal_ad_gradient_call, grad_fn, f, x, y))
     else
-        :((res, pb_f) = CRC.rrule_via_ad(
+        :((res,
+            pb_f) = CRC.rrule_via_ad(
             cfg, __internal_ad_jacobian_call, ForwardDiff.$(fname), grad_fn, f, x, y))
     end
     ret_expr = type == :Gradient ? :(only(res)) : :(res)
@@ -42,7 +45,8 @@ for type in (:Gradient, :Jacobian)
                 cfg::RuleConfig{>:HasReverseMode}, ::typeof($(internal_fname)), f::F,
                 jc_cfg::ForwardDiff.$(cfgname), chk::Val, x::AbstractArray, y) where {F}
             grad_fn = let cfg = cfg
-                (f_internal, x, args...) -> begin
+                (f_internal, x,
+                    args...) -> begin
                     res, ∂f = CRC.rrule_via_ad(cfg, f_internal, x, args...)
                     return ∂f(one(res))[2:end]
                 end

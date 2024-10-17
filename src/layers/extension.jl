@@ -226,7 +226,7 @@ struct SimpleChainsLayer{ToArray, SL, LL <: Union{Nothing, AbstractExplicitLayer
     layer::SL
     lux_layer::LL
 
-    function SimpleChainsLayer{ToArray}(layer, lux_layer=nothing) where {ToArray}
+    function SimpleChainsLayer{ToArray}(layer; lux_layer=nothing) where {ToArray}
         return new{ToArray, typeof(layer), typeof(lux_layer)}(layer, lux_layer)
     end
     function SimpleChainsLayer(layer, ToArray::Union{Bool, Val}=Val(false))

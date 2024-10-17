@@ -1,7 +1,7 @@
 @testitem "Debugging Tools: DimensionMismatch" setup=[SharedTestSetup] tags=[:contrib] begin
     using Logging
 
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         model = Chain(Dense(1 => 16, relu), Chain(Dense(16 => 3), Dense(1 => 1)),
@@ -47,14 +47,14 @@ end
     using Logging, ChainRulesCore
     import ChainRulesCore as CRC
 
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
-    offending_layer(x) = 2 .* x
+    offending_layer(x)=2 .* x
 
     function CRC.rrule(::typeof(offending_layer), x)
-        y = offending_layer(x)
+        y=offending_layer(x)
         function ∇offending_layer(Δ)
-            Δ[1:1] .= NaN
+            Δ[1:1].=NaN
             return NoTangent(), Δ
         end
         return y, ∇offending_layer

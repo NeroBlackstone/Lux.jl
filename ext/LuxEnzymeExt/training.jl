@@ -2,10 +2,12 @@ function Lux.Experimental.compute_gradients(
         ::AutoEnzyme, obj_fn::F, data, ts::TrainState) where {F}
     dps = Lux.recursive_make_zero(ts.parameters)
 
-    obj_fn_wrap, st_wrap, stats_wrap = Lux.Experimental.__wrap_objective_function(
+    obj_fn_wrap, st_wrap,
+    stats_wrap = Lux.Experimental.__wrap_objective_function(
         obj_fn, ts.model, ts.parameters, ts.states, data, Val(true))
 
-    _, loss = Enzyme.autodiff(
+    _,
+    loss = Enzyme.autodiff(
         EnzymeCore.ReverseWithPrimal, obj_fn_wrap, Active, Const(ts.model),
         Duplicated(ts.parameters, dps), Const(ts.states), Const(data))
 
@@ -24,7 +26,8 @@ function Lux.Experimental.compute_gradients(
         ::AutoEnzyme, obj_fn::F, data, ts::TrainState{<:AUTODIFF_CACHE_TYPE, F}) where {F}
     dps = Lux.recursive_make_zero!!(ts.cache.dparameters)
 
-    _, loss = Enzyme.autodiff(
+    _,
+    loss = Enzyme.autodiff(
         EnzymeCore.ReverseWithPrimal, ts.cache.extras.obj_fn, Active, Const(ts.model),
         Duplicated(ts.parameters, dps), Const(ts.states), Const(data))
 
@@ -43,7 +46,8 @@ function Lux.Experimental.compute_gradients(ad::AutoEnzyme, obj_fn::F, data,
 
     mode = EnzymeCore.ReverseModeSplit{
         true, true, 1, ntuple(Returns(false), 5), Enzyme.FFIABI}()
-    forward, reverse = Enzyme.autodiff_thunk(
+    forward,
+    reverse = Enzyme.autodiff_thunk(
         mode, Const{typeof(obj_fn)}, Active, Const{typeof(ts.model)},
         Duplicated{typeof(ts.parameters)}, Const{typeof(ts.states)}, Const{typeof(data)})
 
@@ -62,7 +66,8 @@ function Lux.Experimental.compute_gradients(::AutoEnzyme, obj_fn::F, data,
     dps = Lux.recursive_make_zero!!(ts.cache.dparameters)
     params = Duplicated(ts.parameters, dps)
 
-    tape, (loss, st_, stats), _ = ts.cache.extras.forward(
+    tape, (loss, st_, stats),
+    _ = ts.cache.extras.forward(
         Const(obj_fn), Const(ts.model), params, Const(ts.states), Const(data))
     ts.cache.extras.reverse(
         Const(obj_fn), Const(ts.model), params, Const(ts.states), Const(data),

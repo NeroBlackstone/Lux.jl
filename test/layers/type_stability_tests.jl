@@ -1,7 +1,7 @@
 @testitem "Type Stability" setup=[SharedTestSetup] tags=[:core_layers] begin
     using Zygote
 
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     #! format: off
     MODELS = [
@@ -63,12 +63,11 @@
     ]
     #! format: on
 
-    loss_function(model, x, ps, st) = sum(abs2, first(model(x, ps, st)))
+    loss_function(model, x, ps, st)=sum(abs2, first(model(x, ps, st)))
 
     @testset "$mode" for (mode, aType, dev, ongpu) in MODES
         @testset "$(nameof(typeof(model)))" for (model_list, inputs) in zip(MODELS, INPUTS),
-            model in model_list,
-            input in inputs
+            model in model_list, input in inputs
 
             model = maybe_rewrite_to_crosscor(mode, model)
             ps, st = Lux.setup(rng, model) |> dev

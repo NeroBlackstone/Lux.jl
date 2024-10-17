@@ -53,7 +53,8 @@ function Lux.__apply_dynamic_expression(de::DynamicExpressionsLayer, expr, opera
     partials_fn(x, i) = ForwardDiff.partials(Tag, x, i)
 
     Lux.__update_expression_constants!(expr, ps)
-    y, Jₓ, _ = eval_grad_tree_array(
+    y, Jₓ,
+    _ = eval_grad_tree_array(
         expr, value_fn.(x), operator_enum; variable=Val(true), de.turbo)
     partials = ntuple(
         @closure(i->dropdims(sum(partials_fn.(x, i) .* Jₓ; dims=1); dims=1)), N)
@@ -90,10 +91,10 @@ function Lux.__apply_dynamic_expression(de::DynamicExpressionsLayer, expr, opera
     x_value = value_fn.(x)
 
     Lux.__update_expression_constants!(expr, ps_value)
-    _, Jₓ, _ = eval_grad_tree_array(
-        expr, x_value, operator_enum; variable=Val(true), de.turbo)
-    y, Jₚ, _ = eval_grad_tree_array(
-        expr, x_value, operator_enum; variable=Val(false), de.turbo)
+    _, Jₓ,
+    _ = eval_grad_tree_array(expr, x_value, operator_enum; variable=Val(true), de.turbo)
+    y, Jₚ,
+    _ = eval_grad_tree_array(expr, x_value, operator_enum; variable=Val(false), de.turbo)
     partials = ntuple(
         @closure(i->dropdims(sum(partials_fn.(x, i) .* Jₓ; dims=1); dims=1) .+
                     dropdims(sum(partials_fn.(ps, i) .* Jₚ; dims=1); dims=1)),

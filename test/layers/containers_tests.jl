@@ -1,6 +1,6 @@
 
 @testitem "SkipConnection" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         @testset "zero sum" begin
@@ -33,7 +33,7 @@
 end
 
 @testitem "Parallel" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         @testset "zero sum" begin
@@ -154,7 +154,7 @@ end
 end
 
 @testitem "PairwiseFusion" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         x = (rand(Float32, 1, 10), rand(Float32, 30, 10), rand(Float32, 10, 10)) .|> aType
@@ -203,7 +203,7 @@ end
 end
 
 @testitem "BranchLayer" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         layer = BranchLayer(Dense(10, 10), Dense(10, 10))
@@ -237,7 +237,7 @@ end
 end
 
 @testitem "Chain" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         layer = Chain(Dense(10 => 5, sigmoid), Dense(5 => 2, tanh), Dense(2 => 1))
@@ -348,7 +348,7 @@ end
 end
 
 @testitem "Maxout" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         @testset "constructor" begin
@@ -415,7 +415,7 @@ end
 end
 
 @testitem "Repeated" setup=[SharedTestSetup] tags=[:core_layers] begin
-    rng = StableRNG(12345)
+    rng=StableRNG(12345)
 
     @testset "$mode" for (mode, aType, device, ongpu) in MODES
         LAYERS = [Dense(2 => 2), Parallel(+, Dense(2 => 2), Dense(2 => 2)),
@@ -423,7 +423,8 @@ end
         REPEATS = [Val(4), Val(4), Val(4), Val(4)]
         INJECTION = [Val(false), Val(true), Val(false), Val(true)]
 
-        @testset "repeats = $(repeats); input_injection = $(input_injection)" for (layer, repeats, input_injection) in zip(
+        @testset "repeats = $(repeats); input_injection = $(input_injection)" for (
+            layer, repeats, input_injection) in zip(
             LAYERS, REPEATS, INJECTION)
             layer = RepeatedLayer(layer; repeats, input_injection)
             display(layer)

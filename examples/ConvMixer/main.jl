@@ -97,7 +97,10 @@ end
             train_state = Optimisers.adjust!(train_state, lr)
             x = x |> gdev
             y = y |> gdev
-            (_, _, _, train_state) = Lux.Experimental.single_train_step!(
+            (_,
+                _,
+                _,
+                train_state) = Lux.Experimental.single_train_step!(
                 AutoZygote(), loss, (x, y), train_state)
         end
         ttime = time() - stime
